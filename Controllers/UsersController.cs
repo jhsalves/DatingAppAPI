@@ -12,8 +12,8 @@ namespace DatingApp.API.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        public readonly IDatingRepository _repo;
-        public readonly IMapper _mapper;
+        private readonly IDatingRepository _repo;
+        private readonly IMapper _mapper;
         public UsersController(IDatingRepository datingRepository, IMapper mapper)
         {
             _repo = datingRepository;
@@ -24,7 +24,7 @@ namespace DatingApp.API.Controllers
         public async Task<ActionResult> GetUsers(){
             var users = await _repo.GetUsers();
             var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
-            return Ok(users);
+            return Ok(usersToReturn);
         }
 
         [HttpGet("{id}")]
