@@ -42,17 +42,21 @@ namespace DatingApp.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userToCreate = new User{
-                Username = userForRegister.Username
-            };
+            var userToCreate = _imapper.Map<User>(userForRegister);
 
-            var createUser = await _repository.Register(userToCreate,userForRegister.Password);
+            var createdUser = await _repository.Register(userToCreate,userForRegister.Password);
 
-            return StatusCode(201);
+            var userToReturn = _imapper.Map<UserForDetailDto>(createdUser);
+            
+            return CreatedAtRoute("GetUser",new { controller = "Users", id = createdUser.Id }, userToReturn);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserForLoginDto userForLogin){
+
+            if(userForLogin.Username != null) {
+                userForLogin.Username = userForLogin.Username.ToLower();
+            }
 
             var userFromRepo = await _repository.Login(userForLogin.Username,userForLogin.Password);
             
